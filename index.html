@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Library Vault</title>
+
+    <!-- Premium Typography: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* Modern CSS Variables & Theme Reset */
+        :root {
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --bg-color: #08060a;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.4);
+            --border-glow: rgba(168, 85, 247, 0.2);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 1.5rem;
+        }
+
+        /* Ambient Glowing Background Elements */
+        .ambient-glow-1 {
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            pointer-events: none;
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: 15%;
+            right: 20%;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            pointer-events: none;
+            animation: drift 25s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(40px, -40px) scale(1.1);
+            }
+        }
+
+        /* Container Layout */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            z-index: 10;
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #d8b4fe;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.05);
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #34d399;
+            animation: pulse-dot 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-dot {
+            0% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 30%, #e2e8f0 70%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 440px;
+            line-height: 1.5;
+        }
+
+        /* 3D Stack Perspective Wrapper */
+        .folder-perspective {
+            perspective: 1200px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 380px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .folder-container {
+            width: 160px;
+            height: 208px;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Custom Polaroid Image Card Style */
+        .card {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 8px 8px 24px 8px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transform-origin: bottom center;
+
+            /* Custom spring fanning transitions */
+            transform: translate(var(--tx-closed), var(--ty-closed)) rotate(var(--rot-closed));
+            transition: transform 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.25),
+                box-shadow 0.3s ease,
+                z-index 0.1s step-end;
+            z-index: var(--z-closed);
+            overflow: hidden;
+            pointer-events: none;
+            /* Block clicking unless folder is fanned open */
+        }
+
+        /* Direct click on closed card stack */
+        .folder-container:not(.is-open) .card {
+            pointer-events: auto;
+            /* Clickable to open the stack */
+        }
+
+        .folder-container.is-open .card {
+            transform: translate(var(--tx-open), var(--ty-open)) rotate(var(--rot-open));
+            z-index: var(--z-open);
+            pointer-events: auto;
+            /* Clickable to open lightbox */
+        }
+
+        /* Hover hint separation when card stack is closed */
+        .folder-container:not(.is-open):hover .card {
+            transform: translate(calc(var(--tx-closed) * 1.3), calc(var(--ty-closed) * 1.3)) rotate(calc(var(--rot-closed) * 1.15)) scale(1.02);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Polaroid Photo Image Container */
+        .card-img-container {
+            width: 100%;
+            height: 156px;
+            background-color: #f3f4f6;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card-label {
+            font-size: 0.75rem;
+            color: #4b5563;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-top: 4px;
+        }
+
+        /* Disable card hover scaling during fanning transition */
+        .folder-container.transitioning .card {
+            pointer-events: none !important;
+        }
+
+        /* Interactive Card Hover States (When Stack is Open - Mouse Devices Only) */
+        @media (hover: hover) {
+            .folder-container.is-open .card:hover {
+                transform: translate(var(--tx-open), var(--ty-hover)) rotate(0deg) scale(1.35);
+                z-index: 100 !important;
+                box-shadow: 0 18px 36px rgba(0, 0, 0, 0.7);
+                transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            }
+
+            .folder-container.is-open .card:hover .card-img {
+                transform: scale(1.08);
+            }
+        }
+
+        /* Responsive fanning sizes for mobile screens */
+        @media (max-width: 640px) {
+            .folder-perspective {
+                height: 300px;
+            }
+
+            .folder-container.is-open .card {
+                transform: translate(calc(var(--tx-open) * 0.65), calc(var(--ty-open) * 0.72)) rotate(calc(var(--rot-open) * 0.75)) scale(0.72);
+            }
+
+            .folder-container.is-open .card:hover {
+                transform: translate(calc(var(--tx-open) * 0.65), calc(var(--ty-hover) * 0.72)) rotate(0deg) scale(1.05) !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-download {
+                padding: 0.75rem 1.6rem !important;
+                font-size: 0.85rem !important;
+            }
+
+            .container {
+                gap: 1.25rem !important;
+            }
+        }
+
+        /* Height-responsive scaling to guarantee zero scrollbars on short viewports! */
+        @media (max-height: 720px) {
+            .folder-perspective {
+                height: 300px;
+            }
+
+            .folder-container.is-open .card {
+                transform: translate(calc(var(--tx-open) * 0.75), calc(var(--ty-open) * 0.75)) rotate(calc(var(--rot-open) * 0.8)) scale(0.72) !important;
+            }
+
+            .folder-container.is-open .card:hover {
+                transform: translate(calc(var(--tx-open) * 0.75), calc(var(--ty-hover) * 0.75)) rotate(0deg) scale(1.05) !important;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .folder-perspective {
+                height: 230px;
+            }
+
+            .folder-container {
+                transform: scale(0.8);
+            }
+
+            .folder-container.is-open .card {
+                transform: translate(calc(var(--tx-open) * 0.6), calc(var(--ty-open) * 0.65)) rotate(calc(var(--rot-open) * 0.7)) scale(0.55) !important;
+            }
+
+            .folder-container.is-open .card:hover {
+                transform: translate(calc(var(--tx-open) * 0.6), calc(var(--ty-hover) * 0.65)) rotate(0deg) scale(0.85) !important;
+            }
+        }
+
+        /* Drag-and-drop Import Overlay surrounding the Stack */
+        .drag-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 260px;
+            height: 310px;
+            background: rgba(168, 85, 247, 0.12);
+            border: 2px dashed var(--accent);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 50;
+            color: #e9d5ff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
+        }
+
+        .folder-container.drag-over .drag-overlay {
+            opacity: 1;
+        }
+
+        /* Center Download Button Wrapper */
+        .button-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Center Download Button Styles */
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 0.85rem 2.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-decoration: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-download::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .btn-download:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-download:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-download svg {
+            width: 1.15rem;
+            height: 1.15rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-download:hover svg {
+            transform: translateY(2px);
+        }
+
+        /* Success & Downloading Button States */
+        .btn-download.downloading {
+            background: #1e1b29;
+            border-color: rgba(255, 255, 255, 0.05);
+            color: #6b7280;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn-download.downloading::before {
+            display: none;
+        }
+
+        .btn-download.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-download.success:hover svg {
+            transform: none;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin {
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Dynamic Sync Text Trigger */
+        .sync-hint {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .sync-hint:hover {
+            opacity: 1;
+        }
+
+        /* Glassmorphic Lightbox Modal styles */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(8, 6, 12, 0.88);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            object-fit: contain;
+        }
+
+        .lightbox-caption {
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.4rem 1.2rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+            margin: 0;
+            outline: none;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Lightbox Slider Controls */
+        .lightbox-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 1010;
+            padding: 0;
+            margin: 0;
+            outline: none;
+        }
+
+        .lightbox-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        .lightbox-btn-prev {
+            left: -60px;
+        }
+
+        .lightbox-btn-next {
+            right: -60px;
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-btn {
+                top: auto;
+                bottom: -65px;
+                transform: none;
+            }
+
+            .lightbox-btn:hover {
+                transform: scale(1.08);
+            }
+
+            .lightbox-btn-prev {
+                left: 20%;
+            }
+
+            .lightbox-btn-next {
+                right: 20%;
+            }
+
+            .lightbox-close {
+                right: 10px;
+                top: -50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Ambient Glowing Backgrounds -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="container">
+
+        <!-- Interactive 3D Stack Perspective Wrapper -->
+        <section class="folder-perspective">
+
+            <div class="folder-container" id="folder" aria-label="Toggle Image Gallery">
+                <!-- Polaroid cards are dynamically generated here via JavaScript -->
+
+                <!-- Drag-and-drop Import Overlay -->
+                <div class="drag-overlay">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Drop Photos!</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Centered Download Button & Dynamic Sync Hints -->
+        <div class="button-wrapper">
+            <button class="btn-download" id="download-all-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" x2="12" y1="15" y2="3" />
+                </svg>
+                <span>Download All Images</span>
+            </button>
+            <div class="sync-hint" id="sync-hint">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M20 20a10 10 0 0 0-16-8m16 8v-5m0 5h-5"></path>
+                    <path d="M4 4a10 10 0 0 0 16 8m-16-8v5m0-5h5"></path>
+                </svg>
+                <span id="sync-text">6 photos preloaded.</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Lightbox Zoom Modal -->
+    <div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
+        <!-- Next / Prev controls -->
+        <button class="lightbox-btn lightbox-btn-prev" id="lightbox-prev" aria-label="Previous image">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightbox-close" aria-label="Close Preview">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <img class="lightbox-img" id="lightbox-img" src="" alt="Full resolution preview">
+            <div class="lightbox-caption" id="lightbox-caption">Photo</div>
+        </div>
+
+        <button class="lightbox-btn lightbox-btn-next" id="lightbox-next" aria-label="Next image">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Photo metadata preloaded lists
+        const images = [
+            { url: 'photos/8A0A2C4E-B7C1-4F18-BBF1-F02C4443266B.jpeg', name: 'Photo 1' },
+            { url: 'photos/IMG_1556.png', name: 'Photo 2' },
+            { url: 'photos/IMG_1557 (2).png', name: 'Photo 3' },
+            { url: 'photos/IMG_1558.png', name: 'Photo 4' },
+            { url: 'photos/IMG_1559 (2).png', name: 'Photo 5' },
+            { url: 'photos/IMG_1565.png', name: 'Photo 6' }
+        ];
+
+        // DOMElements
+        const folder = document.getElementById('folder');
+        const downloadBtn = document.getElementById('download-all-btn');
+        const syncText = document.getElementById('sync-text');
+
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const lightboxPrev = document.getElementById('lightbox-prev');
+        const lightboxNext = document.getElementById('lightbox-next');
+
+        let currentImageIndex = 0;
+
+        // --- Render Cards Dynamically with Organic Physical Geometry ---
+        function renderCards() {
+            // Clear previous cards, leaving only the drag-overlay
+            const prevCards = folder.querySelectorAll('.card');
+            prevCards.forEach(c => c.remove());
+
+            const n = images.length;
+
+            images.forEach((img, i) => {
+                // Closed state transforms: organic trigonometric offsets to look like a realistic irregular stack!
+                const rotClosed = Math.sin(i * 1.7) * 7.5;
+                const txClosed = Math.cos(i * 2.3) * 9;
+                const tyClosed = Math.sin(i * 3.1) * 5;
+                const zClosed = 10 + (n - 1 - i);
+
+                // Open fanned-out state transforms: beautiful crescent spread
+                const maxSpreadX = n > 8 ? 200 : (n > 5 ? 170 : 135);
+                const rotOpen = (i - (n - 1) / 2) * (n > 1 ? (n > 8 ? 26 : 34) / (n - 1) : 0);
+                const txOpen = (i - (n - 1) / 2) * (n > 1 ? (maxSpreadX * 2) / (n - 1) : 0);
+
+                // Crescent curve translation
+                const mid = (n - 1) / 2;
+                const distFromMid = Math.abs(i - mid);
+                const normDist = mid > 0 ? distFromMid / mid : 0;
+                const tyOpen = -95 - (1 - normDist) * (n > 8 ? 70 : 55);
+                const tyHover = tyOpen - (n > 8 ? 30 : 40);
+                const zOpen = 20 + i;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.setAttribute('data-index', i);
+
+                // Map local variables to CSS custom variables
+                card.style.setProperty('--tx-closed', `${txClosed}px`);
+                card.style.setProperty('--ty-closed', `${tyClosed}px`);
+                card.style.setProperty('--rot-closed', `${rotClosed}deg`);
+                card.style.setProperty('--z-closed', zClosed);
+
+                card.style.setProperty('--tx-open', `${txOpen}px`);
+                card.style.setProperty('--ty-open', `${tyOpen}px`);
+                card.style.setProperty('--rot-open', `${rotOpen}deg`);
+                card.style.setProperty('--z-open', zOpen);
+                card.style.setProperty('--ty-hover', `${tyHover}px`);
+
+                card.innerHTML = `
+                    <div class="card-img-container">
+                        <img class="card-img" src="${img.url}" alt="${img.name}">
+                    </div>
+                    <span class="card-label">${img.name}</span>
+                `;
+
+                // Card Click Preview Handler
+                card.addEventListener('click', (e) => {
+                    // Only open lightbox if the stack is ALREADY fanned open!
+                    if (folder.classList.contains('is-open')) {
+                        e.stopPropagation(); // Avoid folding trigger
+                        openLightbox(i);
+                    }
+                });
+
+                // Append right before the drag overlay
+                folder.insertBefore(card, folder.querySelector('.drag-overlay'));
+            });
+
+            // Update Sync Hint texts
+            syncText.textContent = `${n} photo${n === 1 ? '' : 's'} loaded.`;
+        }
+
+        // Initial Dynamic Rendering
+        renderCards();
+
+        // --- Stack Helper Animations (Transition Class Handlers) ---
+        function openStack() {
+            if (folder.classList.contains('is-open')) return;
+            folder.classList.add('transitioning');
+            folder.classList.add('is-open');
+            setTimeout(() => {
+                folder.classList.remove('transitioning');
+            }, 650);
+        }
+
+        function closeStack() {
+            if (!folder.classList.contains('is-open')) return;
+            folder.classList.add('transitioning');
+            folder.classList.remove('is-open');
+            setTimeout(() => {
+                folder.classList.remove('transitioning');
+            }, 650);
+        }
+
+        // --- Stack Click Open/Collapse Logic ---
+        folder.addEventListener('click', (e) => {
+            const card = e.target.closest('.card');
+
+            if (!folder.classList.contains('is-open')) {
+                openStack();
+            } else {
+                if (!card) {
+                    closeStack();
+                }
+            }
+        });
+
+        // Accessibility triggers
+        folder.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (folder.classList.contains('is-open')) {
+                    closeStack();
+                } else {
+                    openStack();
+                }
+            }
+        });
+
+        // Close fanned stack on Escape key if not in lightbox
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && folder.classList.contains('is-open') && !lightbox.classList.contains('active')) {
+                closeStack();
+            }
+        });
+
+        // --- Drag & Drop Dynamic File Loading ---
+        folder.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            folder.classList.add('drag-over');
+        });
+
+        folder.addEventListener('dragleave', () => {
+            folder.classList.remove('drag-over');
+        });
+
+        folder.addEventListener('drop', (e) => {
+            e.preventDefault();
+            folder.classList.remove('drag-over');
+
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                let loadedCount = 0;
+
+                // Read and import photos locally
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const cleanName = file.name.split('.').slice(0, -1).join('.') || 'Imported';
+
+                            images.push({
+                                url: event.target.result,
+                                name: cleanName
+                            });
+
+                            loadedCount++;
+                            if (loadedCount === Array.from(files).filter(f => f.type.startsWith('image/')).length) {
+                                // Dynamic re-render and auto-open stack to show newly added items fanned
+                                renderCards();
+                                openStack();
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        // --- Lightbox Preview Logic ---
+        function openLightbox(index) {
+            currentImageIndex = index;
+            const imgData = images[index];
+
+            lightboxImg.src = imgData.url;
+            lightboxCaption.textContent = imgData.name;
+            lightbox.classList.add('active');
+
+            document.addEventListener('keydown', handleLightboxKeys);
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.removeEventListener('keydown', handleLightboxKeys);
+        }
+
+        function navigateLightbox(dir) {
+            let nextIndex = currentImageIndex + dir;
+            if (nextIndex < 0) nextIndex = images.length - 1;
+            if (nextIndex >= images.length) nextIndex = 0;
+
+            currentImageIndex = nextIndex;
+            const imgData = images[nextIndex];
+
+            lightboxImg.style.opacity = '0.3';
+            setTimeout(() => {
+                lightboxImg.src = imgData.url;
+                lightboxCaption.textContent = imgData.name;
+                lightboxImg.style.opacity = '1';
+            }, 120);
+        }
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightboxPrev.addEventListener('click', () => navigateLightbox(-1));
+        lightboxNext.addEventListener('click', () => navigateLightbox(1));
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        function handleLightboxKeys(e) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        }
+
+        // --- Sequential Download Logic ---
+        downloadBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            if (downloadBtn.classList.contains('downloading') || downloadBtn.classList.contains('success')) return;
+
+            downloadBtn.classList.add('downloading');
+            const originalHTML = downloadBtn.innerHTML;
+
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i];
+
+                downloadBtn.innerHTML = `
+                    <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="2.5" fill="none"></circle>
+                        <path d="M12 2C6.47715 2 2 6.47715 2 12C2 13.5 2.5 15 3.5 16L5 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
+                    </svg>
+                    <span>Downloading ${i + 1}/${images.length}...</span>
+                `;
+
+                const link = document.createElement('a');
+                link.href = img.url;
+
+                let ext = 'png';
+                if (img.url.startsWith('data:')) {
+                    ext = img.url.split(';')[0].split('/')[1] || 'png';
+                } else {
+                    ext = img.url.split('.').pop() || 'png';
+                }
+
+                link.download = `${img.name}.${ext}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                await new Promise(resolve => setTimeout(resolve, 600));
+            }
+
+            downloadBtn.classList.remove('downloading');
+            downloadBtn.classList.add('success');
+            downloadBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Downloaded Successfully! 🎉</span>
+            `;
+
+            setTimeout(() => {
+                downloadBtn.classList.remove('success');
+                downloadBtn.innerHTML = originalHTML;
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>
