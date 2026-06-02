@@ -9,7 +9,7 @@
     <!-- Premium Typography: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
         rel="stylesheet">
 
     <style>
@@ -557,6 +557,7 @@
         /* Dynamic Sync Text Trigger */
         .sync-hint {
             font-size: 0.78rem;
+            font-weight: 600;
             color: var(--text-secondary);
             display: flex;
             align-items: center;
@@ -832,19 +833,16 @@
         <!-- Centered Download Button & Dynamic Sync Hints -->
         <div class="button-wrapper">
             <button class="btn-download" id="download-all-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" x2="12" y1="15" y2="3" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="m12 2 .117.007a1 1 0 0 1 .876.876L13 3v4l.005.15a2 2 0 0 0 1.838 1.844L15 9h4l.117.007a1 1 0 0 1 .876.876L20 10v9a3 3 0 0 1-2.824 2.995L17 22H7a3 3 0 0 1-2.995-2.824L4 19V5a3 3 0 0 1 2.824-2.995L7 2zm0 8a1 1 0 0 0-1 1v3.585l-.793-.792a1 1 0 0 0-1.32-.083l-.094.083a1 1 0 0 0 0 1.414l2.5 2.5.044.042.068.055.11.071.114.054.105.035.15.03L12 18l.117-.007.117-.02.108-.033.081-.034.098-.052.092-.064.094-.083 2.5-2.5a1 1 0 0 0 0-1.414l-.094-.083a1 1 0 0 0-1.32.083l-.793.791V11a1 1 0 0 0-.883-.993zm2.999-7.001L19 7h-4z" />
                 </svg>
                 <span>Download All Images</span>
             </button>
             <div class="sync-hint" id="sync-hint">
-                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" viewBox="0 0 24 24">
-                    <path d="M20 20a10 10 0 0 0-16-8m16 8v-5m0 5h-5"></path>
-                    <path d="M4 4a10 10 0 0 0 16 8m-16-8v5m0-5h5"></path>
+                <svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m7.5 12 3 3 6-6m5.5 3c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10" />
                 </svg>
                 <span id="sync-text">6 photos preloaded.</span>
             </div>
@@ -935,7 +933,7 @@
                 const normDist = mid > 0 ? distFromMid / mid : 0;
                 const tyOpen = -95 - (1 - normDist) * (n > 8 ? 70 : 55);
                 const tyHover = tyOpen - (n > 8 ? 30 : 40);
-                const zOpen = 20 + i;
+                const zOpen = 20 + (n - 1 - i);
 
                 const card = document.createElement('div');
                 card.className = 'card';
