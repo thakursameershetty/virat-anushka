@@ -13,15 +13,14 @@
         rel="stylesheet">
 
     <style>
-        /* Modern CSS Variables & Theme Reset */
         :root {
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --bg-color: #08060a;
+            --bg-color: #0a0506; /* Rich Reddish Dark Black */
             --text-primary: #f3f4f6;
             --text-secondary: #9ca3af;
-            --accent: #a855f7;
-            --accent-glow: rgba(168, 85, 247, 0.4);
-            --border-glow: rgba(168, 85, 247, 0.2);
+            --accent: #ec1c24; /* RCB Red */
+            --accent-glow: rgba(236, 28, 36, 0.4);
+            --border-glow: rgba(236, 28, 36, 0.2);
             --card-bg: rgba(255, 255, 255, 0.03);
             --card-border: rgba(255, 255, 255, 0.08);
         }
@@ -60,7 +59,7 @@
             left: 20%;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(236, 28, 36, 0.14) 0%, rgba(0, 0, 0, 0) 70%); /* RCB Red Glow */
             border-radius: 50%;
             filter: blur(80px);
             z-index: -1;
@@ -74,7 +73,7 @@
             right: 20%;
             width: 450px;
             height: 450px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(219, 175, 89, 0.08) 0%, rgba(0, 0, 0, 0) 70%); /* RCB Gold Glow */
             border-radius: 50%;
             filter: blur(80px);
             z-index: -1;
@@ -117,16 +116,16 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.2);
+            background: rgba(236, 28, 36, 0.08);
+            border: 1px solid rgba(219, 175, 89, 0.2);
             padding: 0.35rem 0.85rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
-            color: #d8b4fe;
+            color: #dbaf59; /* RCB Gold */
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.05);
+            box-shadow: 0 4px 12px rgba(236, 28, 36, 0.05);
         }
 
         .badge-dot {
@@ -228,10 +227,12 @@
             /* Clickable to open lightbox */
         }
 
-        /* Hover hint separation when card stack is closed */
-        .folder-container:not(.is-open):hover .card {
-            transform: translate(calc(var(--tx-closed) * 1.3), calc(var(--ty-closed) * 1.3)) rotate(calc(var(--rot-closed) * 1.15)) scale(1.02);
-            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+        /* Hover hint separation when card stack is closed (Mouse Only) */
+        @media (hover: hover) {
+            .folder-container:not(.is-open):hover .card {
+                transform: translate(calc(var(--tx-closed) * 1.3), calc(var(--ty-closed) * 1.3)) rotate(calc(var(--rot-closed) * 1.15)) scale(1.02);
+                box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+            }
         }
 
         /* Polaroid Photo Image Container */
@@ -292,8 +293,10 @@
                 transform: translate(calc(var(--tx-open) * 0.65), calc(var(--ty-open) * 0.72)) rotate(calc(var(--rot-open) * 0.75)) scale(0.72);
             }
 
-            .folder-container.is-open .card:hover {
-                transform: translate(calc(var(--tx-open) * 0.65), calc(var(--ty-hover) * 0.72)) rotate(0deg) scale(1.05) !important;
+            @media (hover: hover) {
+                .folder-container.is-open .card:hover {
+                    transform: translate(calc(var(--tx-open) * 0.65), calc(var(--ty-hover) * 0.72)) rotate(0deg) scale(1.05) !important;
+                }
             }
         }
 
@@ -318,8 +321,10 @@
                 transform: translate(calc(var(--tx-open) * 0.75), calc(var(--ty-open) * 0.75)) rotate(calc(var(--rot-open) * 0.8)) scale(0.72) !important;
             }
 
-            .folder-container.is-open .card:hover {
-                transform: translate(calc(var(--tx-open) * 0.75), calc(var(--ty-hover) * 0.75)) rotate(0deg) scale(1.05) !important;
+            @media (hover: hover) {
+                .folder-container.is-open .card:hover {
+                    transform: translate(calc(var(--tx-open) * 0.75), calc(var(--ty-hover) * 0.75)) rotate(0deg) scale(1.05) !important;
+                }
             }
         }
 
@@ -336,8 +341,10 @@
                 transform: translate(calc(var(--tx-open) * 0.6), calc(var(--ty-open) * 0.65)) rotate(calc(var(--rot-open) * 0.7)) scale(0.55) !important;
             }
 
-            .folder-container.is-open .card:hover {
-                transform: translate(calc(var(--tx-open) * 0.6), calc(var(--ty-hover) * 0.65)) rotate(0deg) scale(0.85) !important;
+            @media (hover: hover) {
+                .folder-container.is-open .card:hover {
+                    transform: translate(calc(var(--tx-open) * 0.6), calc(var(--ty-hover) * 0.65)) rotate(0deg) scale(0.85) !important;
+                }
             }
         }
 
@@ -388,7 +395,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            background: linear-gradient(135deg, #ec1c24 0%, #990012 100%);
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: #ffffff;
             font-size: 0.95rem;
@@ -396,7 +403,7 @@
             border-radius: 9999px;
             padding: 0.85rem 2.2rem;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3),
+            box-shadow: 0 4px 20px rgba(236, 28, 36, 0.35),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             text-decoration: none;
@@ -420,14 +427,14 @@
 
         .btn-download:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45),
+            box-shadow: 0 8px 25px rgba(236, 28, 36, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
             border-color: rgba(255, 255, 255, 0.25);
         }
 
         .btn-download:active {
             transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 2px 10px rgba(236, 28, 36, 0.35);
         }
 
         .btn-download svg {
@@ -638,6 +645,78 @@
                 top: -50px;
             }
         }
+
+        /* Stack Toggle Button Styles */
+        .stack-toggle-btn {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            transform: translate(-50%, -50%);
+            border-radius: 12px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: auto;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                border 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Open State Stack Toggle Button */
+        .folder-container.is-open .stack-toggle-btn {
+            width: 44px;
+            height: 44px;
+            transform: translate(-50%, 70px);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            opacity: 1;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .stack-toggle-btn .toggle-icon {
+            width: 18px;
+            height: 18px;
+            opacity: 0;
+            transform: scale(0.5) rotate(-90deg);
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .folder-container.is-open .stack-toggle-btn .toggle-icon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        @media (hover: hover) {
+            .folder-container.is-open .stack-toggle-btn:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.15);
+                color: rgba(255, 255, 255, 0.6);
+                transform: translate(-50%, 80px) scale(1.08);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+        }
+
+        .folder-container.is-open .stack-toggle-btn:active {
+            transform: translate(-50%, 80px) scale(0.95);
+            background: rgba(255, 255, 255, 0.12);
+        }
     </style>
 </head>
 
@@ -654,6 +733,15 @@
 
             <div class="folder-container" id="folder" aria-label="Toggle Image Gallery">
                 <!-- Polaroid cards are dynamically generated here via JavaScript -->
+
+                <!-- Stack Toggle Button (Hidden overlay when closed, Circle close button when open) -->
+                <button id="stack-toggle" class="stack-toggle-btn" aria-label="Toggle Gallery">
+                    <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
 
                 <!-- Drag-and-drop Import Overlay -->
                 <div class="drag-overlay">
@@ -736,6 +824,7 @@
 
         // DOMElements
         const folder = document.getElementById('folder');
+        const stackToggle = document.getElementById('stack-toggle');
         const downloadBtn = document.getElementById('download-all-btn');
         const syncText = document.getElementById('sync-text');
 
@@ -848,6 +937,16 @@
                 if (!card) {
                     closeStack();
                 }
+            }
+        });
+
+        // Direct Toggle Button Event Listener for robust Mobile & Desktop control
+        stackToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling to folder
+            if (folder.classList.contains('is-open')) {
+                closeStack();
+            } else {
+                openStack();
             }
         });
 
